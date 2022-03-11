@@ -2,10 +2,10 @@ clear all
 yalmip('clear')
 sdpvar x y
 %%
-load('sdp_data.mat')
-% mSize = 15;
-% E = randn(mSize,mSize); E = E + E';
-% F = randn(mSize,mSize); F = F + F';
+%load('sdp_data.mat')
+mSize = 10;
+E = randn(mSize,mSize); E = E + E';
+F = randn(mSize,mSize); F = F + F';
 %%
 matA = eye(mSize)+x*E+y*F;
 
@@ -59,15 +59,13 @@ U = U_0;
 % save optimal cost each time
 cost_temp = [];
 % start iterative change of basis
-for i = 1:1
+for i = 1:3
 % constrain the result
 M_SDD = U'*mat_SDD*U;
 cons_SDD = [cons_M, M_SDD == matA];
-%%
 % plot constrain each time
 plot(cons_SDD,var,[0.5 (0.2+i*0.1) 0.25])
 % optimize and get result
-%%
 optimize(cons_SDD,-cost);
 cost_temp = [cost_temp, value(cost)];
 % update x y optimal value and new U

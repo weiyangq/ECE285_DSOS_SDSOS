@@ -2,10 +2,10 @@ clear all
 yalmip('clear')
 sdpvar x y
 %%
-load('sdp_data.mat')
-% mSize = 10;
-% E = randn(mSize,mSize); E = E + E';
-% F = randn(mSize,mSize); F = F + F';
+%load('sdp_data.mat')
+mSize = 10;
+E = randn(mSize,mSize); E = E + E';
+F = randn(mSize,mSize); F = F + F';
 %%
 matA = eye(mSize)+x*E+y*F;
 
@@ -106,26 +106,24 @@ cons_Alpha = [cons_Alpha, Alpha>=0];
 end
 
 M_SDD = mat_SDD;
-for i = 1:5
+for i = 1:7
 cons_SDD = [cons_M, cons_Alpha];
 cons_SDD = [cons_SDD, M_SDD == matA];
 % optimize and get result
-%option = sdpsettings('solver','mosek');
-%optimize(cons_DD,-cost,option);
+% option = sdpsettings('solver','mosek');
+% optimize(cons_DD,-cost,option);
 %plot(cons_SDD,var,[0.5 (0.9-i*0.1) 0.25])
-%%
-% optimize(cons_SDD,-cost);
-% cost_temp = [cost_temp, value(cost)];
-%%
+optimize(cons_SDD,-cost);
+cost_temp = [cost_temp, value(cost)];
 Alpha = [alpha(i,1) alpha(i,2);alpha(i,2) alpha(i,3)];
 VAV_i = b_j_sav(:,:,i)*Alpha*b_j_sav(:,:,i)';
 M_SDD = M_SDD + VAV_i;
 end
-optimize(cons_SDD,-cost);
-cost_temp = [cost_temp, value(cost)];
-
-tend = toc(tstart)
-cost_psd - cost_temp(end)
+% optimize(cons_SDD,-cost);
+% cost_temp = [cost_temp, value(cost)];
+% 
+% tend = toc(tstart)
+% cost_psd - cost_temp(end)
 
 %%
 % plot psd constrain

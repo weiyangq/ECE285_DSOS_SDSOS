@@ -2,10 +2,10 @@ clear all
 yalmip('clear')
 sdpvar x y
 %%
-load('sdp_data.mat')
-% mSize = 10;
-% E = randn(mSize,mSize); E = E + E';
-% F = randn(mSize,mSize); F = F + F';
+%load('sdp_data.mat')
+mSize = 10;
+E = randn(mSize,mSize); E = E + E';
+F = randn(mSize,mSize); F = F + F';
 matA = eye(mSize)+x*E+y*F;
 
 %% psd constrain
@@ -19,7 +19,7 @@ plot(cons_psd)
 
 %% DD constrain
 % define DD Q
-tstart = tic;
+%tstart = tic;
 n_Vi = mSize^2;
 % formulate the unique vi vector basis list
 I1 = eye(mSize);
@@ -89,21 +89,19 @@ cost_temp = [];
 cost = x+y;
 alpha = sdpvar(11,1);
 M_DD = mat_DD;
-for i = 1:5
+for i = 1:7
 cons_DD = [cons_M, alpha>=0];
 cons_DD = [cons_DD, M_DD == matA];
 % optimize and get result
-%%
-% optimize(cons_DD,-cost);
-% cost_temp = [cost_temp, value(cost)];
-%%
+optimize(cons_DD,-cost);
+cost_temp = [cost_temp, value(cost)];
 B_j = b_j_sav(:,i)*b_j_sav(:,i)';
 M_DD = M_DD + alpha(i)*B_j;
 end
-optimize(cons_DD,-cost);
-cost_temp = [cost_temp, value(cost)];
-tend = toc(tstart)
-cost_psd - cost_temp(end)
+% optimize(cons_DD,-cost);
+% cost_temp = [cost_temp, value(cost)];
+%tend = toc(tstart)
+%cost_psd - cost_temp(end)
 
 %%
 % alpha = sdpvar(21,1);
